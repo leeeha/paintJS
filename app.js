@@ -1,21 +1,35 @@
-// Canvas´Â Context¸¦ °®°í ÀÖ´Â htmlÀÇ ÇÑ ¿ä¼ÒÀÎµ¥, 
-// ¿ì¸®´Â ÀÌ°É·Î ÇÈ¼¿À» ´Ù·ê ¼ö ÀÖ°Ô µÈ´Ù! 
-// Context´Â Äµ¹ö½ºÀÇ ÇÈ¼¿¿¡ Á¢±ÙÇØ¼­ ÄÁÆ®·Ñ ÇÏ´Â ¿ªÇÒ! (2d, 3d)
+// CanvasëŠ” Contextë¥¼ ê°–ê³  ìžˆëŠ” htmlì˜ í•œ ìš”ì†Œì¸ë°, 
+// ìš°ë¦¬ëŠ” ì´ê±¸ë¡œ í”½ì…€ì„ ë‹¤ë£° ìˆ˜ ìžˆê²Œ ëœë‹¤! 
+// ContextëŠ” ìº”ë²„ìŠ¤ì˜ í”½ì…€ì— ì ‘ê·¼í•´ì„œ ì»¨íŠ¸ë¡¤ í•˜ëŠ” ì—­í• ! (2d, 3d)
 const canvas = document.getElementById("jsCanvas");
 const ctx = canvas.getContext("2d");
 
-// ¼±ÀÇ »ö»ó°ú µÎ²² º¯°æ¿¡ »ç¿ë 
+// ì„ ì˜ ìƒ‰ìƒê³¼ ë‘ê»˜ ë³€ê²½ì— ì‚¬ìš© 
 const colors = document.getElementsByClassName("jsColor");
 const range = document.getElementById("jsRange");
 
-// Äµ¹ö½º¸¦ css°¡ ¾Æ´Ï¶ó 'ÇÈ¼¿'·Î ´Ù·ç·Á¸é, ±× Å©±â¸¦ ÁöÁ¤ÇØÁà¾ß ÇÑ´Ù!!! 
-canvas.width = 700;
-canvas.height = 700;
+// ë²„íŠ¼ í† ê¸€í•´ì„œ Fill, Paint ëª¨ë“œ ë³€ê²½ 
+const mode = document.getElementById("jsMode");
 
-ctx.strokeStyle = "#2c2c2c"; // »ö»ó 
-ctx.lineWidth = 2.5; // µÎ²² 
+// Save ë²„íŠ¼ í´ë¦­í•´ì„œ ì´ë¯¸ì§€ ì €ìž¥í•˜ê¸° 
+const saveBtn = document.getElementById("jsSave");
+
+const INITIAL_COLOR = "#2c2c2c";
+const CANVAS_SIZE = 700;
+
+// ìº”ë²„ìŠ¤ë¥¼ cssê°€ ì•„ë‹ˆë¼ 'í”½ì…€'ë¡œ ë‹¤ë£¨ë ¤ë©´, ê·¸ í¬ê¸°ë¥¼ ì§€ì •í•´ì¤˜ì•¼ í•œë‹¤!!! 
+canvas.width = CANVAS_SIZE;
+canvas.height = CANVAS_SIZE;
+
+ctx.fillStyle = "white"; // ìº”ë²„ìŠ¤ì˜ ê¸°ë³¸ ë°°ê²½ìƒ‰ ì„¤ì • 
+ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+ctx.strokeStyle = INITIAL_COLOR; // ì„ ì˜ ìƒ‰ìƒ  
+ctx.fillStyle = INITIAL_COLOR; // ì±„ìš¸ ìƒ‰ìƒ 
+ctx.lineWidth = 2.5; // ì„ ì˜ ë‘ê»˜ 
 
 let painting = false;
+let filling = false;
 
 function startPainting(){
     painting = true;
@@ -30,23 +44,24 @@ function onMouseMove(event){
     const y = event.offsetY;
 
     if(!painting){
-        // Äµ¹ö½º À§ÀÇ ¾î¶² (x, y)µµ path(line)ÀÇ ½ÃÀÛÁ¡ÀÌ µÉ ¼ö ÀÖ´Ù.  
+        // ìº”ë²„ìŠ¤ ìœ„ì˜ ì–´ë–¤ (x, y)ë„ path(line)ì˜ ì‹œìž‘ì ì´ ë  ìˆ˜ ìžˆë‹¤.  
         //console.log("creating path in ", x, y);
         ctx.beginPath();
-        ctx.moveTo(x, y); // pathÀÇ ½ÃÀÛÁ¡ 
+        ctx.moveTo(x, y); // pathì˜ ì‹œìž‘ì  
     }else{
-        // ¸¶¿ì½º¸¦ Å¬¸¯ÇÑ pathÀÇ ½ÃÀÛÁ¡ºÎÅÍ ÇöÀç (x, y)±îÁö 
-        // ¸¶¿ì½º¸¦ ¿òÁ÷ÀÌ´Â ³»³» ¼±À» ±×¸°´Ù. 
+        // ë§ˆìš°ìŠ¤ë¥¼ í´ë¦­í•œ pathì˜ ì‹œìž‘ì ë¶€í„° í˜„ìž¬ (x, y)ê¹Œì§€ 
+        // ë§ˆìš°ìŠ¤ë¥¼ ì›€ì§ì´ëŠ” ë‚´ë‚´ ì„ ì„ ê·¸ë¦°ë‹¤. 
         //console.log("creating line in ", x, y);
         ctx.lineTo(x, y);
-        ctx.stroke(); // ÀÌ°É ÇØ¾ß ¼±ÀÌ ±×·ÁÁü! 
-        //ctx.closePath(); // ÀÌ°É ÇÏ¸é ½ÃÀÛÁ¡ÀÌ °íÁ¤µÊ. 
+        ctx.stroke(); // ì´ê±¸ í•´ì•¼ ì„ ì´ ê·¸ë ¤ì§! 
+        //ctx.closePath(); // ì´ê±¸ í•˜ë©´ ì‹œìž‘ì ì´ ê³ ì •ë¨. 
     }
 }
 
 function handleColorClick(event){
     const color = event.target.style.backgroundColor;
-    ctx.strokeStyle = color; // ¿À¹ö¶óÀÌµå 
+    ctx.strokeStyle = color;  
+    ctx.fillStyle = color; 
 }
 
 function handleRangeChange(event){
@@ -54,20 +69,68 @@ function handleRangeChange(event){
     ctx.lineWidth = size;
 }
 
+function handleModeClick(){
+    if(filling){
+        filling = false;
+        mode.innerText = "Fill"; 
+    }else{
+        filling = true;
+        mode.innerText = "Paint";
+    }
+}
+
+function handleCanvasClick(){
+    if(filling){
+        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    }
+}
+
+// ë§ˆìš°ìŠ¤ ìš°í´ë¦­ìœ¼ë¡œ ì´ë¯¸ì§€ ì €ìž¥í•˜ëŠ” ê±° ë°©ì§€
+function handleCM(event){
+    event.preventDefault();  
+}
+
+function handleSaveClick(){
+    // ìº”ë²„ìŠ¤ì˜ ë°ì´í„°ë¥¼ ì´ë¯¸ì§€ë¡œ ì–»ê¸° 
+    const image = canvas.toDataURL(); // ê¸°ë³¸ì€ png 
+
+    // ë‹¤ìš´ë¡œë“œ ë§í¬ ë§Œë“¤ê¸° 
+    const link = document.createElement("a");
+    link.href = image; 
+    link.download = "PaintJS"; 
+
+    // í´ë¦­ì„ ê°€ì§œë¡œ ë§Œë“¤ê¸°
+    link.click();
+}
+
 if(canvas){
     canvas.addEventListener("mousemove", onMouseMove);
 
-    // ¸¶¿ì½º¸¦ Å¬¸¯ÇØ¼­ ÆäÀÎÆÃÀ» ½ÃÀÛÇÏ¸é true, ¸¶¿ì½º¸¦ ´Ù½Ã ³õÀ¸¸é false
+    // ë§ˆìš°ìŠ¤ë¥¼ í´ë¦­í•´ì„œ íŽ˜ì¸íŒ…ì„ ì‹œìž‘í•˜ë©´ true, ë§ˆìš°ìŠ¤ë¥¼ ë‹¤ì‹œ ë†“ìœ¼ë©´ false
     canvas.addEventListener("mousedown", startPainting);
     canvas.addEventListener("mouseup", stopPainting);
-    canvas.addEventListener("mouseleave", stopPainting); // Äµ¹ö½º ¹þ¾î³ª´Â °æ¿ì 
+    canvas.addEventListener("mouseleave", stopPainting); // ìº”ë²„ìŠ¤ ë²—ì–´ë‚˜ëŠ” ê²½ìš° 
+    
+    // Fill ëª¨ë“œì—ì„œ í´ë¦­í•˜ë©´ ìº”ë²„ìŠ¤ê°€ ì „ë¶€ ìƒ‰ìƒìœ¼ë¡œ ì±„ì›Œì§€ë„ë¡ 
+    canvas.addEventListener("click", handleCanvasClick);
+
+    // ì´ë¯¸ì§€ ì €ìž¥ ë²„íŠ¼ 
+    canvas.addEventListener("contextmenu", handleCM);
 }
 
-// °¢ ÄÃ·¯ ¹öÆ°À» Å¬¸¯ÇÏ¸é strokeStyle »ö»óÀÌ º¯°æµÇµµ·Ï ÀÌº¥Æ® Ã³¸® 
+// ê° ì»¬ëŸ¬ ë²„íŠ¼ì„ í´ë¦­í•˜ë©´ strokeStyle ìƒ‰ìƒì´ ë³€ê²½ë˜ë„ë¡ ì´ë²¤íŠ¸ ì²˜ë¦¬ 
 Array.from(colors).forEach(color => 
     color.addEventListener("click", handleColorClick)
-);
+    );
+    
+    if(range){
+        range.addEventListener("input", handleRangeChange);
+}
 
-if(range){
-    range.addEventListener("input", handleRangeChange);
+if(mode){
+    mode.addEventListener("click", handleModeClick);
+}
+
+if(saveBtn){
+    saveBtn.addEventListener("click", handleSaveClick);
 }
