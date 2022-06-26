@@ -1,6 +1,8 @@
 # paintJS with Nicolas 
 
-Painting board made with VanillaJS
+Painting board made with VanillaJS 
+
+https://nomadcoders.co/javascript-for-beginners-2
 
 ## Canvas API
 
