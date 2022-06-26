@@ -1,4 +1,4 @@
-# paintJS 
+# paintJS with Nicolas 
 
 Painting board made with VanillaJS
 
